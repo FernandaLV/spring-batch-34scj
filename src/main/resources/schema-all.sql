@@ -1,7 +1,7 @@
-drop table if exists TB_PESSOA;
+drop table if exists alunos;
 
-create table TB_ALUNO(
-   id long not null auto_increment primary key,
+create table alunos(
+   id long not null primary key,
    nome varchar(255) not null,
    matricula varchar (20) not null,
    turma varchar (20) not null
