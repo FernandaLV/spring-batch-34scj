@@ -1,8 +1,9 @@
 drop table if exists TB_PESSOA;
 
-create table TB_PESSOA(
+create table TB_ALUNO(
    id long not null auto_increment primary key,
    nome varchar(255) not null,
-   cpf varchar (20) not null
+   matricula varchar (20) not null,
+   turma varchar (20) not null
 )
 

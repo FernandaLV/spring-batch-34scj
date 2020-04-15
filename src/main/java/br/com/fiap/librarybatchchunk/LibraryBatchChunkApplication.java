@@ -4,9 +4,12 @@ import javax.sql.DataSource;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.DefaultBatchConfigurer;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.repository.JobRepository;
+import org.springframework.batch.core.repository.support.MapJobRepositoryFactoryBean;
 import org.springframework.batch.core.step.skip.SkipPolicy;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.batch.item.ItemReader;
@@ -24,7 +27,14 @@ import org.springframework.core.io.Resource;
 
 @SpringBootApplication
 @EnableBatchProcessing
-public class LibraryBatchChunkApplication {
+public class LibraryBatchChunkApplication extends DefaultBatchConfigurer {
+	
+	@Override
+    protected JobRepository createJobRepository() throws Exception {
+        MapJobRepositoryFactoryBean factoryBean = new MapJobRepositoryFactoryBean();
+        factoryBean.afterPropertiesSet();
+        return factoryBean.getObject();
+    }
 	
 	@Bean
 	public SkipPolicy fileVerificationSkipper() {
@@ -32,39 +42,40 @@ public class LibraryBatchChunkApplication {
 	}
 	
 	@Bean
-    public FlatFileItemReader<Pessoa> itemReader(@Value("${file.input}") Resource resource) {
-    	return new FlatFileItemReaderBuilder<Pessoa>()
+    public FlatFileItemReader<Aluno> itemReader(@Value("${file.input}") Resource resource) {
+    	return new FlatFileItemReaderBuilder<Aluno>()
                 .name("file item reader")
-                .targetType(Pessoa.class)
+                .targetType(Aluno.class)
                 .fixedLength()
                 .addColumns(new Range(1,41))
-                .addColumns(new Range(42,53))
-                .names("nome", "cpf")
+                .addColumns(new Range(42,48))
+                .addColumns(new Range(50,55))
+                .names("nome", "matricula", "turma")
                 .resource(resource)
                 .build();
     }
 
     @Bean
-    public ItemProcessor<Pessoa, Pessoa> itemProcessor() {
+    public ItemProcessor<Aluno, Aluno> itemProcessor() {
         return new ValidationProcessor();
     }
 
     @Bean
-    public JdbcBatchItemWriter<Pessoa> itemWriter(DataSource dataSource) {
-        return new JdbcBatchItemWriterBuilder<Pessoa>()
+    public JdbcBatchItemWriter<Aluno> itemWriter(DataSource dataSource) {
+        return new JdbcBatchItemWriterBuilder<Aluno>()
                 .dataSource(dataSource)
-                .sql("insert into TB_PESSOA (nome, cpf) values (:nome, :cpf)")
+                .sql("insert into \"alunos\" (id, nome, matricula, turma) values (:id, :nome, :matricula, :turma)")
                 .beanMapped()
                 .build();
     }
 
     @Bean
     public Step step(StepBuilderFactory stepBuilderFactory,
-                     ItemReader<Pessoa> itemReader,
-                     ItemProcessor<Pessoa, Pessoa> itemProcessor,
-                     ItemWriter<Pessoa> itemWriter) {
+                     ItemReader<Aluno> itemReader,
+                     ItemProcessor<Aluno, Aluno> itemProcessor,
+                     ItemWriter<Aluno> itemWriter) {
         return stepBuilderFactory.get("pessoa step")
-                .<Pessoa, Pessoa>chunk(2)
+                .<Aluno, Aluno>chunk(2)
                 .reader(itemReader).faultTolerant().skipPolicy(fileVerificationSkipper())
                 .processor(itemProcessor)
                 .writer(itemWriter)

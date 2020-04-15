@@ -2,25 +2,24 @@ package br.com.fiap.librarybatchchunk;
 
 import org.springframework.batch.item.ItemProcessor;
 
-public class ValidationProcessor implements ItemProcessor<Pessoa,Pessoa>{
-
-	public Pessoa process(Pessoa pessoa)
+public class ValidationProcessor implements ItemProcessor<Aluno,Aluno>{
+	
+	private static Integer index = 0;
+	
+	public Aluno process(Aluno aluno)
     {
-		if (pessoa.getNome() == "") {
+		if (aluno.getNome() == "") {
     		return null;
     	}
 		
-		if (pessoa.getNome().substring(0, 2).equals("--")) {
+		if (aluno.getNome().substring(0, 2).equals("--")) {
 			return null;
     	}
         
-		pessoa.setNome(pessoa.getNome().toUpperCase());
-        pessoa.setCpf(
-                pessoa.getCpf()
-                        .replaceAll("\\.", "")
-                        .replace("-", "")
-        );
+		aluno.setNome(aluno.getNome().toUpperCase());
 		
-        return pessoa;
+		aluno.setId(++index);
+		
+        return aluno;
     }
 }

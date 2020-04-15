@@ -1,12 +1,14 @@
 package br.com.fiap.librarybatchchunk;
 
-public class Pessoa {
+public class Aluno {
 
     private Integer id;
 
     private String nome;
 
-    private String cpf;
+    private String matricula;
+    
+    private String turma;
 
     public Integer getId() {
         return id;
@@ -24,11 +26,19 @@ public class Pessoa {
         this.nome = nome;
     }
 
-    public String getCpf() {
-        return cpf;
+    public String getMatricula() {
+        return matricula;
     }
 
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
+    public void setMatricula(String matricula) {
+        this.matricula = matricula;
     }
+
+	public String getTurma() {
+		return turma;
+	}
+
+	public void setTurma(String turma) {
+		this.turma = turma;
+	}
 }

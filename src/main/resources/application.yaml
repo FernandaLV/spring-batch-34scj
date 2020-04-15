@@ -1,8 +1,13 @@
 spring:
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create
   datasource:
-    url: jdbc:h2:~/library-batch-chunk;DB_CLOSE_ON_EXIT=FALSE
-    username: fiap
-    password: fiap
+    url: jdbc:postgresql://ec2-52-6-143-153.compute-1.amazonaws.com:5432/dbvghu1rck19oi
+    username: gzanrlevryrfcm
+    password: 62c0ce1687ebbe9f999da8b8bd6ab1615b2d7d99e54e3c037c38d88b9bd65830
+    driverClassName: org.postgresql.Driver
 
 file:
-  input: classpath:alunosfile.txt
+  input: classpath:lista_alunos.txt
