@@ -35,12 +35,10 @@ public class LibraryBatchChunkApplication extends DefaultBatchConfigurer {
 	@Override
     protected JobRepository createJobRepository() throws Exception {
         
-		// Se for usuário do banco H2, retorna nulo
 		if (driverClassName.equals("org.h2.Driver")) {
 			return super.createJobRepository();
 		}
 		
-		// Caso contrário é utilizado o heroku e precisa realizar o map
 		MapJobRepositoryFactoryBean factoryBean = new MapJobRepositoryFactoryBean();
         factoryBean.afterPropertiesSet();
         return factoryBean.getObject();
@@ -75,7 +73,6 @@ public class LibraryBatchChunkApplication extends DefaultBatchConfigurer {
         
     	String comandoSql = "insert into \"alunos\" (id, nome, matricula, turma) values (:id, :nome, :matricula, :turma)";
     	
-    	// Se for usuário do banco H2, o comando é diferente
 		if (driverClassName.equals("org.h2.Driver")) {
 			comandoSql = "insert into alunos (id, nome, matricula, turma) values (:id, :nome, :matricula, :turma)";;
 		}
