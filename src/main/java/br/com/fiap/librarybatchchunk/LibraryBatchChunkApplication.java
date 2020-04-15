@@ -29,9 +29,17 @@ import org.springframework.core.io.Resource;
 @EnableBatchProcessing
 public class LibraryBatchChunkApplication extends DefaultBatchConfigurer {
 	
+	@Value("${spring.datasource.driverClassName}")
+	private String driverClassName;
+	
 	@Override
     protected JobRepository createJobRepository() throws Exception {
-        MapJobRepositoryFactoryBean factoryBean = new MapJobRepositoryFactoryBean();
+        
+		if (driverClassName.equals("org.h2.Driver")) {
+			return super.createJobRepository();
+		}
+		
+		MapJobRepositoryFactoryBean factoryBean = new MapJobRepositoryFactoryBean();
         factoryBean.afterPropertiesSet();
         return factoryBean.getObject();
     }
@@ -62,9 +70,16 @@ public class LibraryBatchChunkApplication extends DefaultBatchConfigurer {
 
     @Bean
     public JdbcBatchItemWriter<Aluno> itemWriter(DataSource dataSource) {
-        return new JdbcBatchItemWriterBuilder<Aluno>()
+        
+    	String comandoSql = "insert into \"alunos\" (id, nome, matricula, turma) values (:id, :nome, :matricula, :turma)";
+    	
+		if (driverClassName.equals("org.h2.Driver")) {
+			comandoSql = "insert into alunos (id, nome, matricula, turma) values (:id, :nome, :matricula, :turma)";;
+		}
+    	
+    	return new JdbcBatchItemWriterBuilder<Aluno>()
                 .dataSource(dataSource)
-                .sql("insert into \"alunos\" (id, nome, matricula, turma) values (:id, :nome, :matricula, :turma)")
+                .sql(comandoSql)
                 .beanMapped()
                 .build();
     }
