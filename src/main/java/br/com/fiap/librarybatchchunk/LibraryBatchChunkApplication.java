@@ -46,19 +46,7 @@ public class LibraryBatchChunkApplication {
 
     @Bean
     public ItemProcessor<Pessoa, Pessoa> itemProcessor() {
-        return pessoa -> {
-        	if (pessoa.getNome() == "") {
-        		return null;
-        	}
-        	
-            pessoa.setNome(pessoa.getNome().toUpperCase());
-            pessoa.setCpf(
-                    pessoa.getCpf()
-                            .replaceAll("\\.", "")
-                            .replace("-", "")
-            );
-            return pessoa;
-        };
+        return new ValidationProcessor();
     }
 
     @Bean

@@ -20,11 +20,15 @@ public class FileVerificationSkipper implements SkipPolicy {
         } else if (exception instanceof IncorrectLineLengthException 
         		|| exception instanceof FlatFileParseException) {
             FlatFileParseException ffpe = (FlatFileParseException) exception;
-            StringBuilder errorMessage = new StringBuilder();
-            errorMessage.append("An error occured while processing the " + ffpe.getLineNumber()
-                    + " line of the file. Below was the faulty " + "input.\n");
-            errorMessage.append(ffpe.getInput() + "\n");
-            logger.error("{}", errorMessage.toString());
+            
+            if (!ffpe.getInput().equals("")) {
+            	StringBuilder errorMessage = new StringBuilder();
+                errorMessage.append("An error occured while processing the " + ffpe.getLineNumber()
+                        + " line of the file. Below was the faulty " + "input.\n");
+                errorMessage.append(ffpe.getInput() + "\n");
+                logger.error("{}", errorMessage.toString());
+            }
+            
             return true;
         } else {
             return false;
